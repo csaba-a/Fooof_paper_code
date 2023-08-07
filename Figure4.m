@@ -14,7 +14,7 @@ define_paths
 [metadata,MEG_auc]=loadmetadata_MEG(meg_data_path,MEG_auc);
 
 %% Calculate group level AUC and pvalues
-type_power_spectrum='max'; %complete, periodic, aperiodic, max
+type_power_spectrum='complete'; %complete, periodic, aperiodic, max
 
 
 % Load and reorder Complete data

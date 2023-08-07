@@ -36,7 +36,7 @@ abnormalities_tbl=table();
 
 %% Repeate for all types -- Max can only be calculated if Periodic and Aperiodic are calculated
 
-type_power_spectrum='max'; %complete, periodic, aperiodic, max
+type_power_spectrum='complete'; %complete, periodic, aperiodic, max
 
 
 % Load and reorder Complete data
