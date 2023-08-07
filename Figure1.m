@@ -4,7 +4,7 @@ close all
 %% paths
 define_paths
 %%  features
-type_power_spectrum='complete'; %complete, periodic, aperiodic
+type_power_spectrum='aperiodic'; %complete, periodic, aperiodic
 
 % parcellation scheme
 parc=4;
@@ -33,21 +33,18 @@ switch type_power_spectrum
         normative_table.complete_psd=MasterChannelTable.pxx_n(RAM_bool,:);
 
 end
-%% Load and reorder atlas
-[atlas_tbl]=reorder_atlas();
-%% Load brain surfaces and color scheme for plotting
-load_brain_surface
+
 %% colormap set up
 % load color scheme
 load('lib/colourmaps_yw.mat'); %this loads cmaps variable
-colormap_idx=cell(5,1);
+colormap_idx=cell(4,1);
 colormap_idx{1}=cmaps.delta_map; %Delta
 colormap_idx{2}=cmaps.theta_map; %Theta
 colormap_idx{3}=cmaps.alpha_map; %Alpha
 colormap_idx{4}=cmaps.beta_map; %Beta
 map = brewermap(256,'Oranges'); %Aperiodic (generate new color)
 map(1,:) = [1 1 1];
-colormap_idx{5}=map;
+colormap_idx_aperiodic=mat2cell(map,size(map,1),size(map,2));
 
 %% Calculate band powers
 switch type_power_spectrum
@@ -57,11 +54,27 @@ switch type_power_spectrum
     case 'periodic'%Periodic
         [rel_bp_periodic,n_chan,n_bands]=calc_band_power(normative_table.flattened_psd,freq_bands);
 end
-%% Plotting preparation
 
-% Take the mean across all controls to generate a whole brain map
-prep_normative_map_data
+
 
 %% Plot normative maps
 
-plot_normative_maps
+switch type_power_spectrum
+    case 'complete'
+        %feature names
+        feature_names={'Delta Bandpower','Theta Bandpower','Alpha Bandpower','Beta Bandpower'};
+        % plot
+        plot_normative_maps(rel_bp_complete, feature_names,rois,n_bands,colormap_idx,parc,analysis_location,figdir_1)
+    case 'periodic'
+        %feature names
+        feature_names={'Periodic Delta Bandpower','Periodic Theta Bandpower','Periodic Alpha Bandpower','Periodic Beta Bandpower'};
+        % plot
+        plot_normative_maps(rel_bp_periodic, feature_names,rois,n_bands,colormap_idx,parc,analysis_location,figdir_1)
+    case 'aperiodic'
+        %feature names
+        feature_names={'Aperiodic exponent'};
+        n_bands=size(normative_table.aperiodic_cmps_2,2);
+        % plot
+        plot_normative_maps(normative_table.aperiodic_cmps_2, feature_names,rois,n_bands,colormap_idx_aperiodic,parc,analysis_location,figdir_1)
+
+end
