@@ -30,7 +30,7 @@ end
 
 %% -- Supplementary -- %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Compare abnormality distributions with correlation plots %%
+%% Compare Drs distributions with correlation plots %%
 % Separate good vs bad outcome pateints
 good_outcome=MEG_auc(strcmp(MEG_auc.outcome,'ILAE1'),:);
 bad_outcome=MEG_auc(strcmp(MEG_auc.outcome,'ILAE2+'),:);

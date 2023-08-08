@@ -93,7 +93,7 @@ end
 
 
 %% %% -- Supplementary -- %%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Compare abnormality distributions with correlation plots %%
+%% Compare Drs distributions with correlation plots %%
 %Run after generated all the abnormality matrices
 % Separate good vs bad outcome pateints
 
