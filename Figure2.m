@@ -7,7 +7,7 @@ define_paths
 
 %% Rerun this section when assign new example patient
 % Example patient
-example_patient="1216";%1216 --good outcome ; 910 -- bad outcome
+example_patient="910";%1216 --good outcome ; 910 -- bad outcome
 
 
 % Load and set up metadata and select example patient
@@ -36,96 +36,76 @@ abnormalities_tbl=table();
 
 %% Repeate for all types -- Max can only be calculated if Periodic and Aperiodic are calculated
 
-type_power_spectrum='complete'; %complete, periodic, aperiodic, max
-
 
 % Load and reorder Complete data
-switch type_power_spectrum
-    case 'complete'
-        load_ieeg_psd %load ieeg complete data
-        [MasterChannelTable]=reorder_ieeg(MasterChannelTable);
-        remove_invalid_contacts % remove invalid contacts (e.g. in white matter etc)
 
+load_ieeg_psd %load ieeg complete data
+[MasterChannelTable]=reorder_ieeg(MasterChannelTable);
+remove_invalid_contacts % remove invalid contacts (e.g. in white matter etc)
+
+
+
+%% Calculate band powers and abnromality for complete and periodic
+%Calculate relative band power for Complete
+[rel_bp_complete,n_chan,n_bands]=calc_band_power(MasterChannelTable.pxx_n,freq_bands);
+normative_table.rel_bp=rel_bp_complete(RAM_bool,:);
+patient_table.rel_bp=rel_bp_complete(UCLH_bool,:);
+
+%Calculate abnormality for complete bp
+[abnormalities_tbl.complete_abn,~]=calc_abnormality(normative_table, patient_table,UCLsubjID,n_bands,resectedThresh, parc);
+
+
+%Calculate relative band power for Periodic
+flattened_pxx=[normative_table.flattened_psd; patient_table.flattened_psd];
+[rel_bp_periodic,~,~]=calc_band_power(flattened_pxx,freq_bands);
+%Data source indices
+data_source=[normative_table.DataSource; patient_table.DataSource];
+
+
+%Define boolian for separating datasets
+UCLH_bool = data_source=="UCLH";
+RAM_bool = data_source=="RAM";
+normative_table.rel_bp=rel_bp_periodic(RAM_bool,:);
+patient_table.rel_bp=rel_bp_periodic(UCLH_bool,:);
+
+%Calculate abnormality for periodic bp
+[abnormalities_tbl.periodic_abn,~]=calc_abnormality(normative_table, patient_table,UCLsubjID,n_bands,resectedThresh, parc);
+
+
+
+%% Calculate abnormality for Aperiodic exponent and Max
+
+%Aperiodic abnormality
+[abnormalities_tbl.aperiodic_abn,UCLROIcontainsresected]=calc_abnormality_aperiodic(normative_table, patient_table,UCLsubjID,resectedThresh, parc);
+
+%Max abnormality across periodic and aperiodic 
+for z=1:length(UCLsubjID)
+    abnormalities_tbl.max_abn(:,z)=max(abs(abnormalities_tbl.periodic_abn(:,z)),abs(abnormalities_tbl.aperiodic_abn(:,z)));
 end
 
-% Calculate band powers
-switch type_power_spectrum
-    case 'complete' %Complete
-        [rel_bp,n_chan,n_bands]=calc_band_power(MasterChannelTable.pxx_n,freq_bands);
-        normative_table.rel_bp=rel_bp(RAM_bool,:);
-        patient_table.rel_bp=rel_bp(UCLH_bool,:);
-    case 'periodic'%Periodic
-        %Combine data for relative bp calculation
-        flattened_pxx=[normative_table.flattened_psd; patient_table.flattened_psd];
-        %Data source indices
-        data_source=[normative_table.DataSource; patient_table.DataSource];
-        [rel_bp,n_chan,n_bands]=calc_band_power(flattened_pxx,freq_bands);
-        
-        %Define boolian for separating datasets
-        UCLH_bool = data_source=="UCLH";
-        RAM_bool = data_source=="RAM";
-        normative_table.rel_bp=rel_bp(RAM_bool,:);
-        patient_table.rel_bp=rel_bp(UCLH_bool,:);
 
+
+%% Plot abnormality brain plots
+for i=1:size(abnormalities_tbl,2)
+
+    [resected,spared]=plot_abnormalities(abnormalities_tbl.(abnormalities_tbl.Properties.VariableNames{i}),UCLROIcontainsresected,resectedThresh,parc);
+    % Plot DRS plots
+    drs_plot_indiv(resected,spared,abnormalities_tbl.(abnormalities_tbl.Properties.VariableNames{i}));
+    % Save plots
+    save_figs(example_patient,abnormalities_tbl.Properties.VariableNames{i},figdir_2)
 end
-
-% Calculate abnormality, plot and save abnormality plots
-
-switch type_power_spectrum
-    case 'complete' %Complete
-        [UCLROIdata_abnormality_complete,UCLROIcontainsresected]=calc_abnormality(normative_table, patient_table,UCLsubjID,n_bands,resectedThresh, parc);
-        abnormalities_tbl.complete_abn=UCLROIdata_abnormality_complete;
-
-        % Plot abnormality brain plots
-        [resected,spared]=plot_abnormalities(UCLROIdata_abnormality_complete,UCLROIcontainsresected,resectedThresh,parc);
-        % Plot DRS plots
-        drs_plot_indiv(resected,spared,UCLROIdata_abnormality_complete);
-
-    case 'periodic' %Periodic
-        [UCLROIdata_abnormality_periodic,UCLROIcontainsresected]=calc_abnormality(normative_table, patient_table,UCLsubjID,n_bands,resectedThresh, parc);
-        abnormalities_tbl.periodic_abn=UCLROIdata_abnormality_periodic;
-
-        % Plot abnormality brain plots
-        [resected,spared]=plot_abnormalities(UCLROIdata_abnormality_periodic,UCLROIcontainsresected,resectedThresh,parc);
-        % Plot DRS plots
-        drs_plot_indiv(resected,spared,UCLROIdata_abnormality_periodic);
-
-        
-    case 'aperiodic' %Aperiodic
-        [UCLROIdata_abnormality_aperiodic,UCLROIcontainsresected]=calc_abnormality_aperiodic(normative_table, patient_table,UCLsubjID,resectedThresh, parc);
-        abnormalities_tbl.aperiodic_abn=UCLROIdata_abnormality_aperiodic;
-
-        % Plot abnormality brain plots
-        [resected,spared]=plot_abnormalities(UCLROIdata_abnormality_aperiodic,UCLROIcontainsresected,resectedThresh,parc);
-        % Plot DRS plots
-        drs_plot_indiv(resected,spared,UCLROIdata_abnormality_aperiodic);
-
-       
-
-    case 'max' %Max abnormality across periodic and aperiodic
-        for z=1:length(UCLsubjID)
-            UCLROIdata_abnormality_max(:,z)=max(abs(UCLROIdata_abnormality_periodic(:,z)),abs(UCLROIdata_abnormality_aperiodic(:,z)));
-        end
-            abnormalities_tbl.max_abn=UCLROIdata_abnormality_max;
-
-            % Plot abnormality brain plots
-            [resected,spared]=plot_abnormalities(UCLROIdata_abnormality_max,UCLROIcontainsresected,resectedThresh,parc);
-            % Plot DRS plots
-            drs_plot_indiv(resected,spared,UCLROIdata_abnormality_max);
-
-           
-        
-end
-
-% Save plots
-save_figs(example_patient,type_power_spectrum,analysis_location,figdir_2)
 %% Compare abnormality distributions with correlation plots %%
-%Run after generated all the abnormality matrices
 
+for z=1:size(abnormalities_tbl,2)
 % Define the type of abnormality you want to compare to Complete Bp
 % abnormality
-abnormality_to_compare = 'aperiodic_abn'; %abnormalities_tbl.aperiodic_abn or abnormalities_tbl.max_abn
-type = 'aperiodic'; %periodic, aperiodic, max
+%Skip complete as you always compare to this
+if strcmp(abnormalities_tbl.Properties.VariableNames{z},'complete_abn')
+    continue
+end
+
+abnormality_to_compare = abnormalities_tbl.Properties.VariableNames{z}; %abnormalities_tbl.aperiodic_abn or abnormalities_tbl.max_abn
+
 % Plotting
 
 figure
@@ -136,8 +116,8 @@ scatter(abnormalities_tbl.(abnormality_to_compare)(resected),abnormalities_tbl.c
 
 correlat=corr(abnormalities_tbl.(abnormality_to_compare),abnormalities_tbl.complete_abn,'rows','complete','Type','Spearman');
 legend({'Spared','Resected'},'Location','northwest')
-xlabel(['Max z based on ', type, ' PSD'])
-ylabel('Max z score based on complete PSD')
+xlabel([abnormality_to_compare(1:end-4),' abnormality'])
+ylabel('complete abormality')
 set(gca, 'FontSize', 16)
 title(['r=',num2str(round(correlat,2))])
 %axis equal
@@ -145,5 +125,6 @@ set(gca,'XTick',[])
 set(gca,'YTick',[])
 
 %Save figure
-saveas(gca, fullfile(analysis_location,figdir_2,strcat(example_patient,'_scatter_Plot_',type,'_vs_complete_abnormality', '.pdf'))); % specify the full path
+saveas(gca, fullfile(figdir_2,strcat(example_patient,'_scatter_Plot_',abnormality_to_compare,'_vs_complete_abnormality', '.pdf'))); % specify the full path
 close all
+end

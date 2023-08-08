@@ -1,4 +1,4 @@
-function save_figs(patient,type_power_spectrum,analysis_location,figdir)
+function save_figs(patient,type_power_spectrum,figdir)
 %% Export figs
 patient= char(patient);
 if ~contains(patient, 'Group')
@@ -15,7 +15,7 @@ for iFig = 1:length(FigList)
 
     set(0, 'CurrentFigure', FigHandle);
 
-    saveas(FigHandle, fullfile(analysis_location,figdir,strcat(FigName, '.pdf'))); % specify the full path
+    saveas(FigHandle, fullfile(figdir,strcat(FigName, '.pdf'))); % specify the full path
 end
 close all
 
