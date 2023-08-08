@@ -32,12 +32,12 @@ arguments
     options.View cell = {'top','anterior','left','right'};  % must be subset of the default views
     options.MarkerSize (1,1) = 200                          % size to plot ROI markers
     options.Colormap = 'parula';    % colormap color
-    options.ColorbarLocation = 'southoutside';              % colorbar location; see colorbar options
+    options.ColorbarLocation = 'eastoutside';              % colorbar location; see colorbar options
     options.PlotBrain = false        % whether to plot brain surface (can be useful to just export markers in epsc format - surface needs to be exported as non-vector graphic)
     options.FontSize = 32           % fontsize (colorbar labels only)
     options.TitleFontSize = 16;     % size of title (feature names)
     options.AtlasIndex = 4;
-    options.MarkerEdgeOff = true ;  % whether to turn off plotting marker edges in a different colour; LineWidthSpared will still influence total marker size
+    options.MarkerEdgeOff = false ;  % whether to turn off plotting marker edges in a different colour; LineWidthSpared will still influence total marker size
     options.LineWidth = 0.5;        % marker linewidth
     options.MarkerEdgeColor = [0 0 0];
     options.climits = [0 4] % marker color if MarkerEdgeOff = false
@@ -78,11 +78,11 @@ for i=1:n_view
     % call vis_plot_abnormalities_on_brain
     vis_plot_abnormalities_on_brain_fooof_paper(norm_meas(:,:),x,...
         atlas.name{options.AtlasIndex},atlas.xyz{options.AtlasIndex},...
-        'SparedMarkerEdgeOff',true,'SparedColor',options.MarkerEdgeColor',...
+        'SparedMarkerEdgeOff',false,'SparedColor',[1,1,1]',...
         'PlotNewFig',false,'MarkerSize',options.MarkerSize,'View',options.View{i},...
-        'PlotColorbar',cbar,'Colormap',options.Colormap,'ColorbarLocation',...
+        'PlotColorbar',false,'Colormap',options.Colormap,'ColorbarLocation',...
         options.ColorbarLocation,'FontSize',options.FontSize,'PlotBrain',options.PlotBrain,...
-        'SparedMarkerEdgeOff',options.MarkerEdgeOff,'LineWidthSpared',options.LineWidth,'CLim',options.climits);
+        'SparedMarkerEdgeOff',options.MarkerEdgeOff,'LineWidthSpared',2,'CLim',options.climits);
 
     % return subplot to full size if has colorbar
     if i == n_view

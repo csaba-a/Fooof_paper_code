@@ -4,7 +4,7 @@ close all
 %% paths
 define_paths
 %%  features
-type_power_spectrum='aperiodic'; %complete, periodic, aperiodic
+type_power_spectrum='complete'; %complete, periodic, aperiodic
 
 % parcellation scheme
 parc=4;
