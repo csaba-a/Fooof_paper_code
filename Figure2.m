@@ -73,7 +73,7 @@ patient_table.rel_bp=rel_bp_periodic(UCLH_bool,:);
 
 
 
-%% Calculate abnormality for Aperiodic exponent and Max
+%% Calculate abnormality for Aperiodic exponent and Max across periodic bp and aperiodic exponent
 
 %Aperiodic abnormality
 [abnormalities_tbl.aperiodic_abn,UCLROIcontainsresected]=calc_abnormality_aperiodic(normative_table, patient_table,UCLsubjID,resectedThresh, parc);

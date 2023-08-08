@@ -31,9 +31,7 @@ end
 %% -- Supplementary -- %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Compare abnormality distributions with correlation plots %%
-%Run after generated all the abnormality matrices
 % Separate good vs bad outcome pateints
-
 good_outcome=MEG_auc(strcmp(MEG_auc.outcome,'ILAE1'),:);
 bad_outcome=MEG_auc(strcmp(MEG_auc.outcome,'ILAE2+'),:);
 
@@ -46,7 +44,7 @@ if strcmp(feature_labels{z},'drs_complete')
     continue
 end
 
-drs_to_compare = feature_labels{z}; %abnormalities_tbl.aperiodic_abn or abnormalities_tbl.max_abn
+drs_to_compare = feature_labels{z}; %select the auc labels
 
 % Plotting
 figure
@@ -71,6 +69,6 @@ set(gcf,'renderer','painters');
 set(gca,'XTick',[])
 set(gca,'YTick',[])
 %Save figure
-saveas(gca, fullfile(figdir_4,strcat('Drs_scatter_Plot_',drs_to_compare,'_vs_drs_complete', '.pdf'))); % specify the full path
+saveas(gca, fullfile(figdir_4,strcat('MEG_Drs_scatter_Plot_',drs_to_compare,'_vs_drs_complete', '.pdf'))); % specify the full path
 close all
 end
