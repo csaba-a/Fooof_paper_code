@@ -7,15 +7,14 @@ define_paths
 
 %% Rerun this section when assign new example patient
 % Example patient
-example_patient="910";%1216 --good outcome ; 910 -- bad outcome
+example_patient="1216";%1216 --good outcome (Patient1) ; 910 -- bad outcome (Patient2)
 
 
 % Load and set up metadata and select example patient
-[metadata,UCLsubjID,~]=load_metadata(metadata_path);
+[metadata,~]=load_metadata(metadata_path);
 
 %select out the right example patient to analyse and plot
-metadata(find(metadata.IDP~=example_patient),:)=[];
-UCLsubjID(find(UCLsubjID~=example_patient),:)=[];
+metadata(metadata.IDP~=example_patient,:)=[];
 
 % parcellation scheme
 parc=2;
@@ -39,25 +38,25 @@ abnormalities_tbl=table();
 
 % Load and reorder Complete data
 
-load_ieeg_psd %load ieeg complete data
+[MasterChannelTable,freq_needed]=load_ieeg_psd; %load ieeg complete data
 [MasterChannelTable]=reorder_ieeg(MasterChannelTable);
-remove_invalid_contacts % remove invalid contacts (e.g. in white matter etc)
+[UCLH_bool,RAM_bool,MasterChannelTable]= remove_invalid_contacts(MasterChannelTable,freq_needed); % remove invalid contacts (e.g. in white matter etc)
 
 
 
 %% Calculate band powers and abnromality for complete and periodic
 %Calculate relative band power for Complete
-[rel_bp_complete,n_chan,n_bands]=calc_band_power(MasterChannelTable.pxx_n,freq_bands);
+[rel_bp_complete,n_chan]=calc_band_power(MasterChannelTable.pxx_n,freq_bands);
 normative_table.rel_bp=rel_bp_complete(RAM_bool,:);
 patient_table.rel_bp=rel_bp_complete(UCLH_bool,:);
 
 %Calculate abnormality for complete bp
-[abnormalities_tbl.complete_abn,~]=calc_abnormality(normative_table, patient_table,UCLsubjID,n_bands,resectedThresh, parc);
+[abnormalities_tbl.complete_abn,~]=calc_abnormality(normative_table, patient_table,metadata.IDP,freq_bands,resectedThresh, parc);
 
 
 %Calculate relative band power for Periodic
 flattened_pxx=[normative_table.flattened_psd; patient_table.flattened_psd];
-[rel_bp_periodic,~,~]=calc_band_power(flattened_pxx,freq_bands);
+[rel_bp_periodic,~]=calc_band_power(flattened_pxx,freq_bands);
 %Data source indices
 data_source=[normative_table.DataSource; patient_table.DataSource];
 
@@ -69,17 +68,17 @@ normative_table.rel_bp=rel_bp_periodic(RAM_bool,:);
 patient_table.rel_bp=rel_bp_periodic(UCLH_bool,:);
 
 %Calculate abnormality for periodic bp
-[abnormalities_tbl.periodic_abn,~]=calc_abnormality(normative_table, patient_table,UCLsubjID,n_bands,resectedThresh, parc);
+[abnormalities_tbl.periodic_abn,~]=calc_abnormality(normative_table, patient_table,metadata.IDP,freq_bands,resectedThresh, parc);
 
 
 
 %% Calculate abnormality for Aperiodic exponent and Max across periodic bp and aperiodic exponent
 
 %Aperiodic abnormality
-[abnormalities_tbl.aperiodic_abn,UCLROIcontainsresected]=calc_abnormality_aperiodic(normative_table, patient_table,UCLsubjID,resectedThresh, parc);
+[abnormalities_tbl.aperiodic_abn,UCLROIcontainsresected]=calc_abnormality_aperiodic(normative_table, patient_table,metadata.IDP,resectedThresh, parc);
 
 %Max abnormality across periodic and aperiodic 
-for z=1:length(UCLsubjID)
+for z=1:length(metadata.IDP)
     abnormalities_tbl.max_abn(:,z)=max(abs(abnormalities_tbl.periodic_abn(:,z)),abs(abnormalities_tbl.aperiodic_abn(:,z)));
 end
 

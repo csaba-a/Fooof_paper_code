@@ -1,4 +1,4 @@
-function [metadata,UCLsubjID,nbUCLsubj]=load_metadata(metadata_path)
+function [metadata,nbUCLsubj]=load_metadata(metadata_path)
 %% LOAD METADATA: loads metadata for the iEEG cohort and selects out the ones needed for analysis
 % Csaba Kozma
 % CNNP Lab, Newcastle University
@@ -16,6 +16,5 @@ m.ILAE1(startlocs:endlocs)=metadata.ILAE1;
 
 metadata=m;
 clear m startlocs endlocs
-UCLsubjID=metadata.IDP;
 nbUCLsubj=size(metadata,1);
 end

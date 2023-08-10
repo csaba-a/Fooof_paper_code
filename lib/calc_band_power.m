@@ -1,6 +1,6 @@
-function [rel_bp,n_chan,n_bands]=calc_band_power(pxx,freq_bands)
+function [rel_bp,n_chan]=calc_band_power(pxx,freq_bands)
 
-fi= 1:0.5:round(size(pxx,2)/2);
+fi= 1:0.5:((size(pxx,2)+1)/2);
 
 % check pxx and freq dimensions)
 if size(pxx,2) ~= length(fi)

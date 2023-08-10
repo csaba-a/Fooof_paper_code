@@ -1,4 +1,4 @@
-
+function [MasterChannelTable,freq_needed]=load_ieeg_psd()
 
 %% Preallocate table
 DataSource={};
@@ -46,3 +46,8 @@ MasterChannelTable.ROIID_inAtlas(startlocs:endlocs,1:4)=ChannelTable.ROIID_inAtl
 MasterChannelTable.pxx_n(startlocs:endlocs,1:159)=ChannelTable.pxx_n;
 clear ChannelTable startlocs endlocs
 
+%% Only need up to 30Hz of data
+
+freq_needed = 1:59;  %0.5 overlap on the frequency dimension means 1-60 datapoints is 1-30Hz
+
+end

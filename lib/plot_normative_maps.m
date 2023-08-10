@@ -1,5 +1,11 @@
-function plot_normative_maps(normative_data, feature_names,rois,n_bands,colormap_idx,parc,analysis_location,figdir)
+function plot_normative_maps(normative_data,freq_bands, feature_names,rois,colormap_idx,parc,figdir,analysis_location)
 %% Calcualte mean values for normative maps and plot normative maps
+% number of frequency bands
+if strcmp(feature_names,'Aperiodic exponent')
+    n_bands=size(normative_data,2);
+else
+    n_bands = size(freq_bands,1);
+end
 %% Load and reorder atlas
 [atlas_tbl]=reorder_atlas();
 %% Load brain surfaces and color scheme for plotting

@@ -4,10 +4,10 @@ close all
 %% paths
 define_paths
 %%  features
-type_power_spectrum='complete'; %complete, periodic, aperiodic
+type_power_spectrum='aperiodic'; %complete, periodic, aperiodic
 
 % parcellation scheme
-parc=4;
+parc=2;
 
 %define frequency bands
 freq_bands = [1 4; %Delta
@@ -27,9 +27,9 @@ end
 %% Load and reorder Complete data
 switch type_power_spectrum
     case 'complete'
-        load_ieeg_psd %load ieeg complete data
+        [MasterChannelTable,freq_needed]=load_ieeg_psd; %load ieeg complete data
         [MasterChannelTable]=reorder_ieeg(MasterChannelTable);
-        remove_invalid_contacts % remove invalid contacts (e.g. in white matter etc)
+        [UCLH_bool,RAM_bool,MasterChannelTable]= remove_invalid_contacts(MasterChannelTable,freq_needed); % remove invalid contacts (e.g. in white matter etc)
         normative_table.complete_psd=MasterChannelTable.pxx_n(RAM_bool,:);
 
 end
@@ -46,35 +46,29 @@ map = brewermap(256,'Oranges'); %Aperiodic (generate new color)
 map(1,:) = [1 1 1];
 colormap_idx_aperiodic=mat2cell(map,size(map,1),size(map,2));
 
-%% Calculate band powers
+%% Calculate band powers and define feature names
 switch type_power_spectrum
     case 'complete' %Complete
-        [rel_bp_complete,n_chan,n_bands]=calc_band_power(normative_table.complete_psd,freq_bands);
+        [normative_data,~]=calc_band_power(normative_table.complete_psd,freq_bands);
+        %feature names
+        feature_names={'Delta Bandpower','Theta Bandpower','Alpha Bandpower','Beta Bandpower'};
 
     case 'periodic'%Periodic
-        [rel_bp_periodic,n_chan,n_bands]=calc_band_power(normative_table.flattened_psd,freq_bands);
+        [normative_data,~]=calc_band_power(normative_table.flattened_psd,freq_bands);
+        %feature names
+        feature_names={'Periodic Delta Bandpower','Periodic Theta Bandpower','Periodic Alpha Bandpower','Periodic Beta Bandpower'};
+
+    case 'aperiodic' %Aperiodic exponent
+        %feature names
+        feature_names={'Aperiodic exponent'};
+        normative_data=normative_table.aperiodic_cmps_2;
+        colormap_idx=colormap_idx_aperiodic;
+
 end
 
 
 
 %% Plot normative maps
 
-switch type_power_spectrum
-    case 'complete'
-        %feature names
-        feature_names={'Delta Bandpower','Theta Bandpower','Alpha Bandpower','Beta Bandpower'};
-        % plot
-        plot_normative_maps(rel_bp_complete, feature_names,rois,n_bands,colormap_idx,parc,analysis_location,figdir_1)
-    case 'periodic'
-        %feature names
-        feature_names={'Periodic Delta Bandpower','Periodic Theta Bandpower','Periodic Alpha Bandpower','Periodic Beta Bandpower'};
-        % plot
-        plot_normative_maps(rel_bp_periodic, feature_names,rois,n_bands,colormap_idx,parc,analysis_location,figdir_1)
-    case 'aperiodic'
-        %feature names
-        feature_names={'Aperiodic exponent'};
-        n_bands=size(normative_table.aperiodic_cmps_2,2);
-        % plot
-        plot_normative_maps(normative_table.aperiodic_cmps_2, feature_names,rois,n_bands,colormap_idx_aperiodic,parc,analysis_location,figdir_1)
 
-end
+plot_normative_maps(normative_data,freq_bands, feature_names,rois,colormap_idx,parc,figdir_1,analysis_location)

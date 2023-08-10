@@ -1,4 +1,4 @@
-function [UCLROIdata_abnormality_final,UCLROIcontainsresected]=calc_abnormality(normative_table, patient_table,UCLsubjID,nbands,resectedThresh, parc)
+function [UCLROIdata_abnormality_final,UCLROIcontainsresected]=calc_abnormality(normative_table, patient_table,UCLsubjID,freq_bands,resectedThresh, parc)
 %% CALC_ABNORMALITY
 % Generates the normative map from control cohort via 
 % taking the mean across channels and patients to have single average
@@ -13,7 +13,11 @@ function [UCLROIdata_abnormality_final,UCLROIcontainsresected]=calc_abnormality(
 % CNNP Lab, Newcastle University
 % July 2023
 %% Calcualte mean and sd for control subjects
+% number of frequency bands
+nbands = size(freq_bands,1);
+
 % Select ROIs based on parcellation
+
 %% Choose the approprite ROIs based on parcellation scheme
 if parc==2
     ROIs_normative=normative_table.ROI_2;
