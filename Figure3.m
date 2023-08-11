@@ -129,6 +129,7 @@ xline(0.5,'LineStyle','--')
 %legend({'Good Outcome','Bad Outcome'},'Location','northwest')
 xlabel(['D_r_s score based on ', drs_to_compare(1:end-4), ' PSD'])
 ylabel('D_r_s score based on Complete PSD')
+axis equal
 ylim([0 1])
 xlim([0 1])
 set(gca, 'FontSize', 16)
@@ -136,7 +137,6 @@ title(['r=',num2str(round(correlat,2))])
 set(gcf,'renderer','painters');
 set(gca,'XTick',[])
 set(gca,'YTick',[])
-
 %Save figure
 saveas(gca, fullfile(figdir_3,strcat('iEEG_Drs_scatter_Plot_',drs_to_compare,'_vs_drs_complete', '.pdf'))); % specify the full path
 close all

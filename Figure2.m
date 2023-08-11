@@ -108,20 +108,24 @@ abnormality_to_compare = abnormalities_tbl.Properties.VariableNames{z}; %abnorma
 % Plotting
 
 figure
+
+
 set(gcf,'renderer','painters');
-scatter(abnormalities_tbl.(abnormality_to_compare)(spared),abnormalities_tbl.complete_abn(spared),100,'filled')
+scatter(abnormalities_tbl.(abnormality_to_compare)(spared),abnormalities_tbl.complete_abn(spared),200,'filled')
 hold on
-scatter(abnormalities_tbl.(abnormality_to_compare)(resected),abnormalities_tbl.complete_abn(resected),100,'filled')
+scatter(abnormalities_tbl.(abnormality_to_compare)(resected),abnormalities_tbl.complete_abn(resected),200,'filled')
 
 correlat=corr(abnormalities_tbl.(abnormality_to_compare),abnormalities_tbl.complete_abn,'rows','complete','Type','Spearman');
-legend({'Spared','Resected'},'Location','northwest')
+%legend({'Spared','Resected'},'Location','northwest')
 xlabel([abnormality_to_compare(1:end-4),' abnormality'])
 ylabel('complete abormality')
 set(gca, 'FontSize', 16)
 title(['r=',num2str(round(correlat,2))])
-%axis equal
-set(gca,'XTick',[])
-set(gca,'YTick',[])
+axis equal
+xlim([0 4])
+ylim([0 4])
+set(gca,'XTick',[0,2,4])
+set(gca,'YTick',[0,2,4])
 
 %Save figure
 saveas(gca, fullfile(figdir_2,strcat(example_patient,'_scatter_Plot_',abnormality_to_compare,'_vs_complete_abnormality', '.pdf'))); % specify the full path

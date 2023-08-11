@@ -4,8 +4,8 @@ close all
 %% paths
 define_paths
 %%  features
-type_power_spectrum='aperiodic'; %complete, periodic, aperiodic
-
+type_power_spectrum='periodic'; %complete, periodic, aperiodic
+modality='iEEG';
 % parcellation scheme
 parc=2;
 
@@ -57,7 +57,7 @@ switch type_power_spectrum
         [normative_data,~]=calc_band_power(normative_table.flattened_psd,freq_bands);
         %feature names
         feature_names={'Periodic Delta Bandpower','Periodic Theta Bandpower','Periodic Alpha Bandpower','Periodic Beta Bandpower'};
-
+        
     case 'aperiodic' %Aperiodic exponent
         %feature names
         feature_names={'Aperiodic exponent'};
@@ -67,8 +67,7 @@ switch type_power_spectrum
 end
 
 
-
 %% Plot normative maps
 
 
-plot_normative_maps(normative_data,freq_bands, feature_names,rois,colormap_idx,parc,figdir_1,analysis_location)
+plot_normative_maps(normative_data,freq_bands, feature_names,rois,colormap_idx,parc,figdir_1,analysis_location,modality)

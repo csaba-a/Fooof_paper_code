@@ -61,6 +61,7 @@ xline(0.5,'LineStyle','--')
 %legend({'Good Outcome','Bad Outcome'},'Location','northwest')
 xlabel(['D_r_s score based on ', drs_to_compare(5:end), ' PSD'])
 ylabel('D_r_s score based on complete PSD')
+axis equal
 ylim([0 1])
 xlim([0 1])
 set(gca, 'FontSize', 16)
