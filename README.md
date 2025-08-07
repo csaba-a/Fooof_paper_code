@@ -165,7 +165,7 @@ python MEG_abnormality.py
 If you use this code in your research, please cite:
 
 ```
-[Add your citation here]
+[Kozma, C., Schroeder, G., Owen, T., de Tisi, J., McEvoy, A. W., Miserocchi, A., Duncan, J., Wang, Y., & Taylor, P. N. (2024). Identifying epileptogenic abnormality by decomposing intracranial EEG and MEG power spectra. Journal of Neuroscience Methods, 408, 110180. https://doi.org/10.1016/j.jneumeth.2024.110180]
 ```
 
 ## Contributing
@@ -176,9 +176,7 @@ If you use this code in your research, please cite:
 4. Add tests if applicable
 5. Submit a pull request
 
-## License
 
-[Add your license information here]
 
 ## Contact
 
