@@ -146,8 +146,8 @@ python MEG_abnormality.py
 ## Configuration
 
 ### Parcellation Schemes
-- **2-region**: Coarse brain division
-- **4-region**: Finer anatomical parcellation
+- **2-128 region**: Coarse brain division
+- **4-446region**: Finer anatomical parcellation
 
 ### Frequency Bands
 - Delta: 1-4 Hz
@@ -165,7 +165,7 @@ python MEG_abnormality.py
 If you use this code in your research, please cite:
 
 ```
-[Kozma, C., Schroeder, G., Owen, T., de Tisi, J., McEvoy, A. W., Miserocchi, A., Duncan, J., Wang, Y., & Taylor, P. N. (2024). Identifying epileptogenic abnormality by decomposing intracranial EEG and MEG power spectra. Journal of Neuroscience Methods, 408, 110180. https://doi.org/10.1016/j.jneumeth.2024.110180]
+Kozma, C., Schroeder, G., Owen, T., de Tisi, J., McEvoy, A. W., Miserocchi, A., Duncan, J., Wang, Y., & Taylor, P. N. (2024). Identifying epileptogenic abnormality by decomposing intracranial EEG and MEG power spectra. Journal of Neuroscience Methods, 408, 110180. https://doi.org/10.1016/j.jneumeth.2024.110180
 ```
 
 ## Contributing
